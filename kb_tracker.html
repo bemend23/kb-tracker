@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>KB + Bodyweight 8-Week Tracker</title>
+  <style>
+    :root { --pad: 14px; --radius: 14px; }
+    body { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif; margin: 0; background:#0b0d12; color:#f2f3f5; }
+    header { padding: 18px var(--pad); position: sticky; top: 0; background: rgba(11,13,18,.92); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,.08); z-index: 10; }
+    h1 { margin: 0; font-size: 18px; }
+    .sub { opacity: .75; font-size: 12px; margin-top: 6px; }
+    main { padding: var(--pad); max-width: 1100px; margin: 0 auto; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 980px) { .grid { grid-template-columns: 1.25fr .75fr; } }
+    .card { background: #121625; border: 1px solid rgba(255,255,255,.08); border-radius: var(--radius); padding: var(--pad); box-shadow: 0 10px 24px rgba(0,0,0,.25); }
+    .row { display:flex; gap:10px; flex-wrap: wrap; align-items: center; }
+    label { font-size: 12px; opacity: .85; display:block; margin-bottom: 6px; }
+    input, select, textarea, button {
+      background:#0f1320; color:#f2f3f5; border:1px solid rgba(255,255,255,.10);
+      border-radius: 12px; padding: 10px 12px; font-size: 14px;
+    }
+    textarea { width: 100%; min-height: 72px; resize: vertical; }
+    input[type="number"] { width: 110px; }
+    input[type="date"] { width: 155px; }
+    button { cursor: pointer; }
+    button.primary { background: #1c6bff; border-color: rgba(28,107,255,.5); }
+    button.danger { background: #c53b3b; border-color: rgba(197,59,59,.5); }
+    button.ghost { background: transparent; }
+    button.small { padding: 8px 10px; border-radius: 10px; font-size: 13px; }
+    .pill { font-size: 12px; padding: 6px 10px; border-radius: 999px; border:1px solid rgba(255,255,255,.12); opacity: .9; }
+    .sep { height: 1px; background: rgba(255,255,255,.10); margin: 12px 0; }
+    .title { font-weight: 700; font-size: 14px; }
+    .muted { opacity: .75; }
+    a { color: #8ab4ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    ul { margin: 8px 0 0 18px; }
+    .checklist { display: grid; gap: 8px; margin-top: 10px; }
+    .check { display:flex; gap:10px; align-items:flex-start; }
+    .check input { transform: translateY(2px); }
+    .timer { font-variant-numeric: tabular-nums; font-size: 28px; font-weight: 800; letter-spacing: 0.5px; }
+    .timerSmall { font-variant-numeric: tabular-nums; font-size: 13px; opacity: .85; margin-top: 6px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+    th, td { border-bottom: 1px solid rgba(255,255,255,.08); padding: 10px 8px; vertical-align: top; }
+    th { text-align:left; opacity: .8; font-size: 12px; }
+    .nowrap { white-space: nowrap; }
+    .right { text-align:right; }
+    .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: 12px;
+      border:1px solid rgba(255,255,255,.16); padding: 2px 6px; border-radius: 8px; opacity: .9;
+    }
+    .banner { border-left: 4px solid #1c6bff; padding: 10px 12px; background: rgba(28,107,255,.08); border-radius: 12px; }
+    .tabs { display:flex; gap:8px; flex-wrap: wrap; margin-top: 10px; }
+    .tab { border:1px solid rgba(255,255,255,.12); background: transparent; }
+    .tab.active { background:#1c6bff; border-color: rgba(28,107,255,.5); }
+    .statGrid { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    @media (min-width: 520px) { .statGrid { grid-template-columns: 1fr 1fr 1fr 1fr; } }
+    .stat { padding: 10px; border: 1px solid rgba(255,255,255,.10); border-radius: 12px; background: #0f1320; }
+    .stat .n { font-size: 20px; font-weight: 800; }
+    .stat .k { font-size: 12px; opacity: .8; margin-top: 4px; }
+    details { border:1px solid rgba(255,255,255,.10); border-radius: 12px; padding: 10px 12px; background:#0f1320; }
+    details summary { cursor:pointer; font-weight: 700; }
+    .noteBox { padding: 10px 12px; border-radius: 12px; border:1px dashed rgba(255,255,255,.18); background: rgba(255,255,255,.03); }
+  </style>
+</head>
+<body>
+<header>
+  <h1>KB + Bodyweight Tracker (8 weeks)</h1>
+  <div class="sub">30-minute sessions • EMOM beeps • Dashboard + Technique checklist • Stored locally on your iPhone</div>
+</header>
+
+<main class="grid">
+  <!-- LEFT -->
+  <section class="card" id="workoutCard">
+    <div class="row" style="justify-content: space-between;">
+      <div>
+        <div class="title">Today</div>
+        <div class="muted">Pick a day → follow checklist → save to log.</div>
+      </div>
+      <div class="pill">35M • 5'9 • 196 • KB 12kg</div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active small" data-view="workout">Workout</button>
+      <button class="tab small" data-view="dashboard">Dashboard</button>
+      <button class="tab small" data-view="technique">Technique</button>
+    </div>
+
+    <div class="sep"></div>
+
+    <!-- WORKOUT VIEW -->
+    <div id="view-workout">
+      <div class="row">
+        <div>
+          <label>Date</label>
+          <input type="date" id="dateInput" />
+        </div>
+        <div>
+          <label>Workout Day</label>
+          <select id="daySelect">
+            <option value="D1">Day 1 — Power + Strength</option>
+            <option value="D2">Day 2 — Athletic Conditioning</option>
+            <option value="D3">Day 3 — Strength Density</option>
+            <option value="D4">Day 4 (Optional) — Metabolic Reset</option>
+          </select>
+        </div>
+        <div>
+          <label>Energy</label>
+          <select id="energySelect">
+            <option>Low</option>
+            <option selected>Medium</option>
+            <option>High</option>
+          </select>
+        </div>
+        <div>
+          <label>RPE (1–10)</label>
+          <input type="number" id="rpeInput" min="1" max="10" value="7"/>
+        </div>
+        <div>
+          <label>Rounds Completed</label>
+          <input type="number" id="roundsInput" min="0" placeholder="e.g., 5"/>
+        </div>
+      </div>
+
+      <div style="margin-top: 10px;">
+        <label>Notes (optional)</label>
+        <textarea id="notesInput" placeholder="Sleep? pace? form cue? anything notable."></textarea>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="banner">
+        <div class="title">Timer (with EMOM minute beeps)</div>
+        <div class="muted" style="margin-top:6px;">
+          iPhone note: sound plays only if your phone is not muted and Safari allows audio (usually after a button tap).
+        </div>
+        <div class="row" style="margin-top: 10px; align-items:flex-start;">
+          <div>
+            <div class="timer" id="timerDisplay">00:00</div>
+            <div class="timerSmall" id="timerMeta">Ready</div>
+            <div class="timerSmall muted" id="emomMeta"></div>
+          </div>
+          <div class="row">
+            <button class="primary" id="startEmomBtn">Start EMOM 6:00</button>
+            <button class="primary" id="start12Btn">Start Block 12:00</button>
+            <button class="primary" id="start15Btn">Start Block 15:00</button>
+            <button class="primary" id="start20Btn">Start Block 20:00</button>
+            <button class="ghost" id="pauseBtn">Pause</button>
+            <button class="ghost" id="resetTimerBtn">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+
+      <div id="workoutContent"></div>
+
+      <div class="sep"></div>
+
+      <div class="row" style="justify-content: space-between;">
+        <button class="primary" id="saveLogBtn">Save to Log ✅</button>
+        <div class="muted">Fast logging: <b>Rounds</b> + <b>RPE</b> is enough.</div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="view-dashboard" style="display:none;">
+      <div class="title">Dashboard</div>
+      <div class="muted">Trends update from your saved logs.</div>
+
+      <div class="sep"></div>
+
+      <div class="row">
+        <div>
+          <label>Dashboard range</label>
+          <select id="dashRange">
+            <option value="7">Last 7 days</option>
+            <option value="14">Last 14 days</option>
+            <option value="56" selected>Last 8 weeks</option>
+            <option value="9999">All time</option>
+          </select>
+        </div>
+        <button class="small" id="refreshDashBtn">Refresh</button>
+      </div>
+
+      <div class="statGrid" id="statGrid"></div>
+
+      <div class="sep"></div>
+
+      <div class="title">Weekly summary (Mon–Sun)</div>
+      <div class="muted">Goal: 3–4 sessions/week. Watch rounds trend up for Days 1–3.</div>
+      <div id="weeklyTable"></div>
+
+      <div class="sep"></div>
+
+      <div class="noteBox muted">
+        <b>How to “win” this plan:</b>
+        <ul>
+          <li>3 sessions/week minimum</li>
+          <li>Keep Day 1 & Day 3 honest strength-density (don’t sprint)</li>
+          <li>Rounds slowly rise, or RPE slowly drops at same rounds</li>
+          <li>Walking 7–10k steps/day amplifies fat loss</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- TECHNIQUE VIEW -->
+    <div id="view-technique" style="display:none;">
+      <div class="title">Technique Checklist</div>
+      <div class="muted">Quick scan before sets. Keep reps crisp. Stop when form degrades.</div>
+
+      <div class="sep"></div>
+
+      <details open>
+        <summary>KB Swing (hinge)</summary>
+        <div class="muted" style="margin-top:8px;">
+          🎥 <a href="https://www.youtube.com/watch?v=YSxHifyI6s8" target="_blank" rel="noopener">Video demo</a>
+          <ul>
+            <li><b>Cues:</b> “Hike” the bell back, snap hips, ribs down, neutral spine, arms as hooks.</li>
+            <li><b>Feel:</b> glutes/hamstrings + abs; NOT low back.</li>
+            <li><b>Common mistakes:</b> squatting it, lifting with arms, overextending at top, bell drifting far away.</li>
+            <li><b>Self-check:</b> top position = tall plank (glutes tight, abs tight), not a backbend.</li>
+          </ul>
+        </div>
+      </details>
+
+      <div style="height:10px"></div>
+
+      <details>
+        <summary>KB Clean & Press</summary>
+        <div class="muted" style="margin-top:8px;">
+          🎥 <a href="https://www.youtube.com/watch?v=5u7euN1HTuU" target="_blank" rel="noopener">Video demo</a>
+          <ul>
+            <li><b>Cues:</b> keep bell close, “zipper path,” punch through to rack (no wrist slam), brace before press.</li>
+            <li><b>Rack:</b> forearm vertical-ish, wrist neutral, elbow near ribs, lat engaged.</li>
+            <li><b>Common mistakes:</b> casting bell away, floppy wrist, pressing without bracing, shrugging to finish.</li>
+            <li><b>Scaling:</b> if strict press breaks → push press for last minutes.</li>
+          </ul>
+        </div>
+      </details>
+
+      <div style="height:10px"></div>
+
+      <details>
+        <summary>Goblet Squat</summary>
+        <div class="muted" style="margin-top:8px;">
+          🎥 <a href="https://www.youtube.com/watch?v=MeIiIdhvXT4" target="_blank" rel="noopener">Video demo</a>
+          <ul>
+            <li><b>Cues:</b> feet rooted, chest tall, elbows inside knees, sit between heels.</li>
+            <li><b>Common mistakes:</b> knees collapsing in, heels lifting, rounding at the bottom.</li>
+            <li><b>Fix:</b> slow 2–3 sec down; pause 1 sec in the hole if needed.</li>
+          </ul>
+        </div>
+      </details>
+
+      <div style="height:10px"></div>
+
+      <details>
+        <summary>Push-up</summary>
+        <div class="muted" style="margin-top:8px;">
+          🎥 <a href="https://www.youtube.com/watch?v=IODxDxX7oi4" target="_blank" rel="noopener">Video demo</a>
+          <ul>
+            <li><b>Cues:</b> body as one unit, glutes tight, ribs down, hands under shoulders, elbows ~30–45°.</li>
+            <li><b>Common mistakes:</b> sagging hips, flaring elbows, craning neck.</li>
+            <li><b>Scaling:</b> elevate hands (counter/bench) to keep quality reps.</li>
+          </ul>
+        </div>
+      </details>
+
+      <div style="height:10px"></div>
+
+      <details>
+        <summary>Single-leg KB RDL</summary>
+        <div class="muted" style="margin-top:8px;">
+          🎥 <a href="https://www.youtube.com/watch?v=2SHsk9AzdjA" target="_blank" rel="noopener">Video demo</a>
+          <ul>
+            <li><b>Cues:</b> hips square, soft knee, reach back with free leg, feel hamstring stretch, slow down.</li>
+            <li><b>Common mistakes:</b> opening pelvis, rounding back, collapsing arch/ankle.</li>
+            <li><b>Fix:</b> touch a wall with rear foot lightly for balance while keeping hinge pattern.</li>
+          </ul>
+        </div>
+      </details>
+
+      <div style="height:10px"></div>
+
+      <details>
+        <summary>Bodyweight Row (table / rail / TRX)</summary>
+        <div class="muted" style="margin-top:8px;">
+          🎥 <a href="https://www.youtube.com/watch?v=rloXYB8M3vU" target="_blank" rel="noopener">Video demo</a>
+          <ul>
+            <li><b>Cues:</b> rigid plank body, pull elbows toward hips, pause at top, control down.</li>
+            <li><b>Common mistakes:</b> shrugging, hips sagging, yanking reps.</li>
+            <li><b>If unavailable:</b> swap in prone Y-T-W raises (2×10 each) or towel isometric rows.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+
+  </section>
+
+  <!-- RIGHT -->
+  <aside class="card">
+    <div class="title">Workout Log</div>
+    <div class="muted">Stored locally (this iPhone). Export to back up.</div>
+
+    <div class="row" style="margin-top: 10px;">
+      <button id="exportBtn">Export JSON</button>
+      <button id="importBtn">Import JSON</button>
+      <button class="danger" id="resetAllBtn">Reset All Data</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none;" />
+    </div>
+
+    <div class="sep"></div>
+
+    <div id="logTable"></div>
+
+    <div class="sep"></div>
+
+    <div class="title">Quick tip</div>
+    <div class="muted">If you’re doing OMAD, have <b>some protein + water</b> before training to avoid dizziness.</div>
+  </aside>
+</main>
+
+<script>
+  // -------------------------
+  // Workout templates
+  // -------------------------
+  const workouts = {
+    D1: {
+      title: "Day 1 — Power + Strength",
+      overview: "Warm-up → EMOM Swings (6 min) → Strength Density (12 min) → Finisher → Cool-down",
+      sections: [
+        {
+          name: "Warm-up (5 min)",
+          items: [
+            "Jumping jacks or march — 60 sec",
+            "Hip hinges × 15",
+            "Arm circles × 20",
+            "Bodyweight squats × 15",
+            "Plank — 30 sec",
+            "Light KB swings × 15"
+          ],
+          tips: [
+            "Move smoothly; don’t rush.",
+            "If stiff: add 30 sec hip flexor stretch per side."
+          ]
+        },
+        {
+          name: "Block A — EMOM 6:00 (Power)",
+          items: [
+            "KB Swings — 15 reps at the start of each minute",
+            "Check off each minute as you go: Minute 1–6"
+          ],
+          links: [
+            { label: "Swing demo", url: "https://www.youtube.com/watch?v=YSxHifyI6s8" }
+          ],
+          mistakes: [
+            "Squatting instead of hinging (should feel hamstrings/glutes).",
+            "Pulling with arms—arms are hooks; hips drive the bell.",
+            "Rounding low back—keep ribs down and spine neutral."
+          ]
+        },
+        {
+          name: "Block B — Strength Density 12:00",
+          items: [
+            "Rotate continuously for 12 minutes:",
+            "1) KB Clean & Press — 5/side",
+            "2) Push-ups — 12–20",
+            "3) Goblet Squat — 12",
+            "Repeat the cycle until 12 minutes ends."
+          ],
+          links: [
+            { label: "Clean & Press", url: "https://www.youtube.com/watch?v=5u7euN1HTuU" },
+            { label: "Push-up form", url: "https://www.youtube.com/watch?v=IODxDxX7oi4" },
+            { label: "Goblet squat", url: "https://www.youtube.com/watch?v=MeIiIdhvXT4" }
+          ],
+          tips: [
+            "Pace it: first round should feel ‘easy.’",
+            "Goal = more total rounds over weeks (density).",
+            "If press form breaks: use push press for last minutes."
+          ]
+        },
+        {
+          name: "Finisher (5–6 min)",
+          items: [
+            "Repeat continuously:",
+            "Mountain climbers — 30 sec",
+            "KB swings — 20 reps",
+            "Hollow hold — 30 sec"
+          ],
+          tips: ["Keep it crisp; stop 1 rep before form fails."]
+        },
+        {
+          name: "Cool-down (3 min)",
+          items: [
+            "Hip flexor stretch — 45 sec/side",
+            "Chest opener (doorway) — 45 sec/side",
+            "Nasal breathing — 60 sec"
+          ]
+        }
+      ]
+    },
+    D2: {
+      title: "Day 2 — Athletic Conditioning",
+      overview: "Warm-up → 20-min flow at sustainable pace → Cool-down",
+      sections: [
+        {
+          name: "Warm-up (5 min)",
+          items: [
+            "Jacks or march — 60 sec",
+            "Hip hinges × 15",
+            "Squats × 15",
+            "Plank — 30 sec",
+            "Light KB swings × 15"
+          ]
+        },
+        {
+          name: "20-Min Athletic Flow (Block 20:00)",
+          items: [
+            "Cycle continuously:",
+            "KB clean → squat → press × 5/side",
+            "Reverse lunges × 10/leg",
+            "Pike push-ups × 10",
+            "Plank shoulder taps × 30",
+            "KB swings × 20"
+          ],
+          links: [{ label: "Lebe Stark channel (inspiration)", url: "https://www.youtube.com/@LebeStark" }],
+          tips: [
+            "Sustainable pace: finish without collapsing.",
+            "Try nasal breathing for first 10 minutes."
+          ],
+          mistakes: [
+            "Rushing transitions and losing positions.",
+            "Letting bell drift far away on swings."
+          ]
+        },
+        {
+          name: "Cool-down (3 min)",
+          items: [
+            "Hamstrings — 45 sec/side",
+            "Shoulders/chest — 45 sec/side",
+            "Slow breathing — 60 sec"
+          ]
+        }
+      ]
+    },
+    D3: {
+      title: "Day 3 — Strength Density (Muscle Retention)",
+      overview: "Warm-up → 15-min density block → 8-min finisher → Cool-down",
+      sections: [
+        {
+          name: "Warm-up (5 min)",
+          items: [
+            "Jacks — 60 sec",
+            "Hip hinges × 15",
+            "Squats × 15",
+            "Plank — 30 sec",
+            "Light KB swings × 15"
+          ]
+        },
+        {
+          name: "Density Block (15:00)",
+          items: [
+            "Rotate continuously:",
+            "Bodyweight rows — 10–15 (table/rail/TRX if available)",
+            "Single-leg KB RDL — 10/leg",
+            "Push-ups — 15",
+            "KB front rack squat — 10",
+            "Repeat until 15 minutes ends."
+          ],
+          links: [
+            { label: "Bodyweight row", url: "https://www.youtube.com/watch?v=rloXYB8M3vU" },
+            { label: "Single-leg RDL", url: "https://www.youtube.com/watch?v=2SHsk9AzdjA" }
+          ],
+          tips: [
+            "If no rows: prone Y-T-W raises (2×10 each) OR towel isometric rows.",
+            "Keep RDL hips square; slow eccentric."
+          ],
+          mistakes: [
+            "RDL: twisting pelvis open; losing hamstring tension.",
+            "Front rack squat: collapsing chest; keep elbows forward."
+          ]
+        },
+        {
+          name: "Finisher (8:00)",
+          items: [
+            "Alternate for 8 minutes:",
+            "Burpees × 8",
+            "KB swings × 15"
+          ],
+          tips: ["Consistent pace > sprinting."]
+        },
+        {
+          name: "Cool-down (3 min)",
+          items: [
+            "Quad stretch — 45 sec/side",
+            "Hip stretch — 45 sec/side",
+            "Slow breathing — 60 sec"
+          ]
+        }
+      ]
+    },
+    D4: {
+      title: "Day 4 (Optional) — Metabolic Reset",
+      overview: "Easy mental load, steady effort",
+      sections: [
+        {
+          name: "Warm-up (5 min)",
+          items: [
+            "Jacks — 60 sec",
+            "Hip hinges × 15",
+            "Squats × 15",
+            "Plank — 30 sec",
+            "Light KB swings × 15"
+          ]
+        },
+        {
+          name: "AMRAP 20:00",
+          items: [
+            "As many rounds as possible at steady pace:",
+            "KB swings × 10",
+            "Push-ups × 10",
+            "Bodyweight squats × 10",
+            "Walk 20 steps"
+          ],
+          tips: ["Strong sweat session, not a death match."]
+        },
+        {
+          name: "Cool-down (3 min)",
+          items: [
+            "Hamstrings — 45 sec/side",
+            "Chest opener — 45 sec/side",
+            "Nasal breathing — 60 sec"
+          ]
+        }
+      ]
+    }
+  };
+
+  // -------------------------
+  // Storage + helpers
+  // -------------------------
+  const LS_KEY = "kb_tracker_logs_v2";
+  function loadLogs() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; }
+    catch { return []; }
+  }
+  function saveLogs(logs) { localStorage.setItem(LS_KEY, JSON.stringify(logs)); }
+  function isoToday() { return new Date().toISOString().slice(0,10); }
+  function fmtDate(d) {
+    const dt = new Date(d + "T00:00:00");
+    return dt.toLocaleDateString(undefined, { year:"numeric", month:"short", day:"2-digit" });
+  }
+  function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+
+  // Monday-start week key
+  function weekKey(isoDate){
+    const d = new Date(isoDate + "T00:00:00");
+    const day = (d.getDay() + 6) % 7; // Mon=0..Sun=6
+    d.setDate(d.getDate() - day);
+    return d.toISOString().slice(0,10); // week start (Mon)
+  }
+  function inLastNDays(isoDate, n){
+    const d = new Date(isoDate + "T00:00:00");
+    const now = new Date();
+    const diffDays = (now - d) / (1000*60*60*24);
+    return diffDays >= 0 && diffDays <= n;
+  }
+
+  // -------------------------
+  // Tabs
+  // -------------------------
+  const tabBtns = [...document.querySelectorAll(".tab")];
+  const views = {
+    workout: document.getElementById("view-workout"),
+    dashboard: document.getElementById("view-dashboard"),
+    technique: document.getElementById("view-technique")
+  };
+  tabBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const view = btn.dataset.view;
+      Object.keys(views).forEach(k => views[k].style.display = (k===view) ? "" : "none");
+      if (view === "dashboard") renderDashboard();
+    });
+  });
+
+  // -------------------------
+  // Render workout content
+  // -------------------------
+  const workoutContent = document.getElementById("workoutContent");
+  const daySelect = document.getElementById("daySelect");
+
+  function renderWorkout(dayKey) {
+    const w = workouts[dayKey];
+    workoutContent.innerHTML = `
+      <div class="title">${w.title}</div>
+      <div class="muted" style="margin-top:6px;">${w.overview}</div>
+      <div class="sep"></div>
+      ${w.sections.map((s, idx) => `
+        <div style="margin-bottom: 14px;">
+          <div class="row" style="justify-content: space-between;">
+            <div class="title">${s.name}</div>
+            <div class="pill">Section ${idx+1}</div>
+          </div>
+          <div class="checklist">
+            ${s.items.map((it,i) => `
+              <div class="check">
+                <input type="checkbox">
+                <div>${it}</div>
+              </div>
+            `).join("")}
+          </div>
+          ${s.links ? `
+            <div class="muted" style="margin-top:10px;">
+              ${s.links.map(l => `🎥 <a href="${l.url}" target="_blank" rel="noopener">${l.label}</a>`).join(" • ")}
+            </div>
+          ` : ""}
+
+          ${s.tips ? `
+            <div class="muted" style="margin-top:10px;">
+              <b>Tips:</b>
+              <ul>${s.tips.map(t=>`<li>${t}</li>`).join("")}</ul>
+            </div>
+          ` : ""}
+
+          ${s.mistakes ? `
+            <div class="muted" style="margin-top:10px;">
+              <b>Common mistakes:</b>
+              <ul>${s.mistakes.map(m=>`<li>${m}</li>`).join("")}</ul>
+            </div>
+          ` : ""}
+          <div class="sep"></div>
+        </div>
+      `).join("")}
+    `;
+  }
+
+  daySelect.addEventListener("change", () => renderWorkout(daySelect.value));
+
+  // -------------------------
+  // Audio beeps (WebAudio)
+  // -------------------------
+  let audioCtx = null;
+  function ensureAudio() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+  }
+  function beep(freq=880, duration=0.08, type="sine", gain=0.08){
+    try {
+      ensureAudio();
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = type;
+      o.frequency.value = freq;
+      g.gain.value = gain;
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start();
+      o.stop(audioCtx.currentTime + duration);
+    } catch(e) {}
+  }
+  function doubleBeep(){
+    beep(880, 0.07, "sine", 0.08);
+    setTimeout(()=>beep(880, 0.07, "sine", 0.08), 120);
+  }
+  function finishTone(){
+    beep(660, 0.10, "sine", 0.09);
+    setTimeout(()=>beep(880, 0.12, "sine", 0.09), 140);
+    setTimeout(()=>beep(990, 0.14, "sine", 0.09), 320);
+  }
+
+  // -------------------------
+  // Timer (EMOM minute beeps)
+  // -------------------------
+  const timerDisplay = document.getElementById("timerDisplay");
+  const timerMeta = document.getElementById("timerMeta");
+  const emomMeta = document.getElementById("emomMeta");
+
+  let timerInterval = null;
+  let remaining = 0;
+  let total = 0;
+  let mode = "Ready";
+  let paused = false;
+  let emomEnabled = false;  // minute beeps
+  let emomMinutes = 0;      // total minutes for EMOM
+  let lastMinuteMark = null;
+
+  function updateTimerUI() {
+    const m = Math.floor(Math.max(0, remaining) / 60);
+    const s = Math.floor(Math.max(0, remaining) % 60);
+    timerDisplay.textContent = String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
+    timerMeta.textContent = paused ? `${mode} — Paused` : mode;
+
+    if (emomEnabled) {
+      const elapsed = total - remaining;
+      const currentMinute = Math.floor(elapsed / 60) + 1; // 1..N
+      const secInto = elapsed % 60;
+      emomMeta.textContent = `EMOM minute ${clamp(currentMinute,1,emomMinutes)} / ${emomMinutes} • ${secInto}s in minute`;
+    } else {
+      emomMeta.textContent = "";
+    }
+  }
+
+  function stopTimer(doneMsg=null){
+    clearInterval(timerInterval);
+    timerInterval = null;
+    emomEnabled = false;
+    lastMinuteMark = null;
+    if (doneMsg) timerMeta.textContent = doneMsg;
+    updateTimerUI();
+  }
+
+  function setTimer(seconds, label, opts={}) {
+    ensureAudio(); // unlock audio on button tap
+    stopTimer();
+    remaining = seconds;
+    total = seconds;
+    mode = label;
+    paused = false;
+
+    emomEnabled = !!opts.emom;
+    emomMinutes = opts.emomMinutes || 0;
+    lastMinuteMark = null;
+
+    updateTimerUI();
+
+    // At start: minute beep so you start reps right away
+    if (emomEnabled) doubleBeep();
+
+    timerInterval = setInterval(() => {
+      if (paused) return;
+
+      remaining--;
+      const elapsed = total - remaining;
+
+      if (emomEnabled) {
+        // beep at each new minute boundary (elapsed 60,120,...)
+        if (elapsed % 60 === 0 && elapsed !== 0) {
+          const minuteNumber = elapsed / 60 + 1; // starting next minute
+          // avoid double triggers
+          if (lastMinuteMark !== minuteNumber) {
+            lastMinuteMark = minuteNumber;
+            doubleBeep();
+          }
+        }
+      }
+
+      updateTimerUI();
+
+      if (remaining <= 0) {
+        finishTone();
+        try { navigator.vibrate && navigator.vibrate([200,100,200]); } catch {}
+        stopTimer(`${mode} — Done ✅`);
+      }
+    }, 1000);
+  }
+
+  document.getElementById("startEmomBtn").addEventListener("click", () => setTimer(6*60, "EMOM 6:00", { emom:true, emomMinutes:6 }));
+  document.getElementById("start12Btn").addEventListener("click", () => setTimer(12*60, "Block 12:00"));
+  document.getElementById("start15Btn").addEventListener("click", () => setTimer(15*60, "Block 15:00"));
+  document.getElementById("start20Btn").addEventListener("click", () => setTimer(20*60, "Block 20:00"));
+
+  document.getElementById("pauseBtn").addEventListener("click", () => {
+    paused = !paused;
+    updateTimerUI();
+  });
+
+  document.getElementById("resetTimerBtn").addEventListener("click", () => {
+    stopTimer("Ready");
+    remaining = 0; total = 0; mode = "Ready"; paused = false;
+    updateTimerUI();
+  });
+
+  // -------------------------
+  // Logs UI
+  // -------------------------
+  const logTable = document.getElementById("logTable");
+  function renderLogs() {
+    const logs = loadLogs().sort((a,b) => (b.date||"").localeCompare(a.date||""));
+    if (!logs.length) {
+      logTable.innerHTML = `<div class="muted">No logs yet. Save your first session from the Workout tab.</div>`;
+      return;
+    }
+    logTable.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th class="nowrap">Date</th>
+            <th>Workout</th>
+            <th class="right nowrap">Rounds</th>
+            <th class="right nowrap">RPE</th>
+            <th class="nowrap">Energy</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${logs.map(l => `
+            <tr>
+              <td class="nowrap">${fmtDate(l.date)}</td>
+              <td>${l.workoutTitle}</td>
+              <td class="right">${l.rounds ?? ""}</td>
+              <td class="right">${l.rpe ?? ""}</td>
+              <td class="nowrap">${l.energy ?? ""}</td>
+              <td>${(l.notes||"").replace(/</g,"&lt;")}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+  }
+
+  // -------------------------
+  // Save log
+  // -------------------------
+  const dateInput = document.getElementById("dateInput");
+  const energySelect = document.getElementById("energySelect");
+  const rpeInput = document.getElementById("rpeInput");
+  const roundsInput = document.getElementById("roundsInput");
+  const notesInput = document.getElementById("notesInput");
+
+  document.getElementById("saveLogBtn").addEventListener("click", () => {
+    const dayKey = daySelect.value;
+    const w = workouts[dayKey];
+
+    const dateVal = dateInput.value || isoToday();
+    const log = {
+      date: dateVal,
+      dayKey,
+      workoutTitle: w.title,
+      energy: energySelect.value,
+      rpe: roundsInput.value === "" && rpeInput.value === "" ? null : Number(rpeInput.value || ""),
+      rounds: roundsInput.value === "" ? null : Number(roundsInput.value),
+      notes: notesInput.value || ""
+    };
+
+    const logs = loadLogs();
+    logs.push(log);
+    saveLogs(logs);
+    renderLogs();
+    timerMeta.textContent = "Saved to Log ✅";
+  });
+
+  // -------------------------
+  // Export / Import / Reset
+  // -------------------------
+  document.getElementById("exportBtn").addEventListener("click", () => {
+    const logs = loadLogs();
+    const blob = new Blob([JSON.stringify({ version:2, logs }, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "kb_tracker_backup.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  const importFile = document.getElementById("importFile");
+  document.getElementById("importBtn").addEventListener("click", () => importFile.click());
+
+  importFile.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const text = await file.text();
+    try {
+      const parsed = JSON.parse(text);
+      if (!parsed.logs || !Array.isArray(parsed.logs)) throw new Error("Invalid file.");
+      saveLogs(parsed.logs);
+      renderLogs();
+      timerMeta.textContent = "Imported ✅";
+    } catch (err) {
+      alert("Import failed: " + err.message);
+    } finally {
+      importFile.value = "";
+    }
+  });
+
+  document.getElementById("resetAllBtn").addEventListener("click", () => {
+    if (!confirm("This will delete ALL saved logs on this iPhone. Continue?")) return;
+    localStorage.removeItem(LS_KEY);
+    renderLogs();
+    renderDashboard();
+    timerMeta.textContent = "All data reset ✅";
+  });
+
+  // -------------------------
+  // DASHBOARD
+  // -------------------------
+  const statGrid = document.getElementById("statGrid");
+  const weeklyTable = document.getElementById("weeklyTable");
+  const dashRange = document.getElementById("dashRange");
+  document.getElementById("refreshDashBtn").addEventListener("click", renderDashboard);
+  dashRange.addEventListener("change", renderDashboard);
+
+  function renderDashboard() {
+    const logsAll = loadLogs();
+    const range = Number(dashRange.value || 56);
+
+    const logs = (range >= 9999)
+      ? logsAll.slice()
+      : logsAll.filter(l => l.date && inLastNDays(l.date, range));
+
+    const totalSessions = logs.length;
+    const last7 = logsAll.filter(l => l.date && inLastNDays(l.date, 7)).length;
+
+    const rpeVals = logs.map(l => Number(l.rpe)).filter(v => !Number.isNaN(v) && v > 0);
+    const avgRpe = rpeVals.length ? (rpeVals.reduce((a,b)=>a+b,0)/rpeVals.length).toFixed(1) : "—";
+
+    const roundsVals = logs.map(l => Number(l.rounds)).filter(v => !Number.isNaN(v) && v >= 0);
+    const avgRounds = roundsVals.length ? (roundsVals.reduce((a,b)=>a+b,0)/roundsVals.length).toFixed(1) : "—";
+
+    // Best rounds by day (D1-D3 mainly)
+    function bestByDay(dayKey){
+      const vals = logsAll.filter(l => l.dayKey===dayKey && l.rounds !== null && l.rounds !== undefined)
+                          .map(l => Number(l.rounds))
+                          .filter(v => !Number.isNaN(v));
+      return vals.length ? Math.max(...vals) : "—";
+    }
+
+    statGrid.innerHTML = `
+      <div class="stat"><div class="n">${totalSessions}</div><div class="k">Sessions in range</div></div>
+      <div class="stat"><div class="n">${last7}</div><div class="k">Sessions (last 7d)</div></div>
+      <div class="stat"><div class="n">${avgRounds}</div><div class="k">Avg rounds (logged)</div></div>
+      <div class="stat"><div class="n">${avgRpe}</div><div class="k">Avg RPE</div></div>
+      <div class="stat"><div class="n">${bestByDay("D1")}</div><div class="k">Best rounds Day 1</div></div>
+      <div class="stat"><div class="n">${bestByDay("D2")}</div><div class="k">Best rounds Day 2</div></div>
+      <div class="stat"><div class="n">${bestByDay("D3")}</div><div class="k">Best rounds Day 3</div></div>
+      <div class="stat"><div class="n">${bestByDay("D4")}</div><div class="k">Best rounds Day 4</div></div>
+    `;
+
+    // Weekly summary
+    const byWeek = new Map(); // weekStart -> {count, d1,d2,d3,d4}
+    logsAll.forEach(l => {
+      if (!l.date) return;
+      const wk = weekKey(l.date);
+      if (!byWeek.has(wk)) byWeek.set(wk, { count:0, D1:0, D2:0, D3:0, D4:0 });
+      const obj = byWeek.get(wk);
+      obj.count++;
+      if (obj[l.dayKey] !== undefined) obj[l.dayKey]++;
+    });
+
+    const weekRows = [...byWeek.entries()]
+      .sort((a,b)=> b[0].localeCompare(a[0]))
+      .slice(0, 12); // show last 12 weeks
+
+    if (!weekRows.length) {
+      weeklyTable.innerHTML = `<div class="muted">No weekly data yet. Save a workout log first.</div>`;
+      return;
+    }
+
+    weeklyTable.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th class="nowrap">Week (Mon)</th>
+            <th class="right nowrap">Total</th>
+            <th class="right nowrap">D1</th>
+            <th class="right nowrap">D2</th>
+            <th class="right nowrap">D3</th>
+            <th class="right nowrap">D4</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${weekRows.map(([wk, obj]) => `
+            <tr>
+              <td class="nowrap">${fmtDate(wk)}</td>
+              <td class="right"><b>${obj.count}</b></td>
+              <td class="right">${obj.D1}</td>
+              <td class="right">${obj.D2}</td>
+              <td class="right">${obj.D3}</td>
+              <td class="right">${obj.D4}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+  }
+
+  // -------------------------
+  // Init
+  // -------------------------
+  (function init() {
+    dateInput.value = isoToday();
+    renderWorkout(daySelect.value);
+    renderLogs();
+    updateTimerUI();
+  })();
+</script>
+</body>
+</html>
